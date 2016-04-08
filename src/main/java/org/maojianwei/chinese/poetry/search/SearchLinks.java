@@ -27,32 +27,48 @@ public class SearchLinks {
 
         while (!pageLink.equals("")) {
             try {
-                Document doc = Jsoup.connect("http://so.gushiwen.org/type.aspx").get();
+                Document doc = Jsoup.connect(pageLink).get();
 
-                Elements elements = doc.getElementsByClass("sons");
+//                Elements elements = doc.getElementsByClass("sons");
+//
+//                for (Element div : elements) {
+//
+//                    for (Element ele : div.children()) {
+//                        if (!ele.tag().getName().equals("p")) {
+//                            continue;
+//                        } else {
+//                            if (ele.children() != null) {
+//                                String poetryLink = ele.child(0).attr("href");
+//                                if (!poetryLink.equals("")) {
+//                                    if (!linkQueue.offer(poetryUrlHead + poetryLink)) {
+//                                        System.out.println("---------------------------------LinkedBlockingQueue Offer False !!!");//push
+//                                    } else {
+//                                        System.out.println(poetryUrlHead + poetryLink);
+//                                    }
+//                                    break;
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
 
-                for (Element div : elements) {
+                Elements elements = doc.getElementsByClass("pages");
 
-                    for (Element ele : div.children()) {
-                        if (!ele.tag().getName().equals("p")) {
-                            continue;
-                        } else {
-                            if (ele.children() != null) {
-                                String poetryLink = ele.child(0).attr("href");
-                                if (!poetryLink.equals("")) {
-                                    if (!linkQueue.offer(poetryUrlHead + poetryLink)) {
-                                        System.out.println("---------------------------------LinkedBlockingQueue Offer False !!!");//push
-                                    } else {
-                                        System.out.println(poetryUrlHead + poetryLink);
-                                    }
-                                    break;
-                                }
-                            }
+                for(Element ele : elements.first().children()){
+                    if(!ele.tag().getName().equals("a")){
+                        continue;
+                    }else if(ele.text().equals("下一页")){
+
+                        if(!ele.attr("href").equals("")) {
+                            pageLink = poetryUrlHead + ele.attr("href");
+                            System.out.println(pageLink);
+                        }else{
+                            System.out.println("------------------Next Url False !!!");
                         }
                     }
-
+                    int aaa = 0;
                 }
-
+                int a = 0;
 
             } catch (IOException e) {
                 e.printStackTrace();
