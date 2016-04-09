@@ -16,13 +16,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Created by mao on 4/9/16.
  */
-public class PoetrySpiderCallable implements Callable {
+public class SpiderCallable implements Callable {
 
     LinkedBlockingQueue linkQueue;
     AtomicBoolean pageComplete;
     AtomicBoolean needShutdown;
 
-    public PoetrySpiderCallable(LinkedBlockingQueue queue, AtomicBoolean pageComplete, AtomicBoolean needShutdown){
+    public SpiderCallable(LinkedBlockingQueue queue, AtomicBoolean pageComplete, AtomicBoolean needShutdown){
         this.linkQueue = queue;
         this.needShutdown = needShutdown;
         this.pageComplete = pageComplete;
@@ -31,6 +31,8 @@ public class PoetrySpiderCallable implements Callable {
 
     public Integer call(){
 
+        int count = 0;
+
         while(!needShutdown.get()) {
 
             Object poetryUrl = null;
@@ -38,23 +40,31 @@ public class PoetrySpiderCallable implements Callable {
                 poetryUrl = linkQueue.poll(500, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                System.out.println("Spider: ---------------------queue poll error!!!");
             }
 
             if(poetryUrl == null){
                 if(pageComplete.get()) {
+                    System.out.println("Spider: pageComplete set");
                     break;
                 }
                 else{
+                    System.out.println("Spider: queue empty, wait...");
                     continue;
                 }
             }
 
             if(needShutdown.get()){
+                System.out.println("Spider: shutdown set");
                 break;
             }
 
             getOnePoetry((String)poetryUrl);
+
+            System.out.print("Spider: poetry count ");
+            System.out.println(++count);
         }
+        System.out.println("Spider: Quit");
         return 0;
     }
 
@@ -78,6 +88,7 @@ public class PoetrySpiderCallable implements Callable {
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("Search: Jsoup connect error!!!");
         }
 
         System.out.println(poetry.append("--- END ---").toString());
@@ -104,7 +115,11 @@ public class PoetrySpiderCallable implements Callable {
 
             if (ele.text().equals("作者：")) {
 
-                return ele.nextElementSibling().text().trim();
+                if(ele.nextElementSibling() != null) {
+                    return ele.nextElementSibling().text().trim();
+                }else{
+                    return ele.nextSibling().toString();
+                }
             }
         }
         return "mao unknown";

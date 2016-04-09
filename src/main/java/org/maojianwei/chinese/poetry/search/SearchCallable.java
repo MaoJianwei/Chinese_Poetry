@@ -8,35 +8,51 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by mao on 4/9/16.
  */
 public class SearchCallable implements Callable {
 
-    String firstPagesuffix;
+    final String FIRST_PAGE_SUFFIX;
     final String POETRY_URL_HEAD;// = "http://so.gushiwen.org";
     final int MAX_PAGE_COUNT;// = 3;
+
     LinkedBlockingQueue linkQueue;
+    AtomicBoolean needShutdown = new AtomicBoolean();
+    AtomicBoolean pageComplete = new AtomicBoolean();
 
 
-    public SearchCallable(LinkedBlockingQueue queue, String poetryUrlHead, String firstPagesuffix, int maxPageCount) {
+    public SearchCallable(
+            LinkedBlockingQueue queue,
+            String poetryUrlHead,
+            String firstPagesuffix,
+            int maxPageCount,
+            AtomicBoolean pageComplete,
+            AtomicBoolean needShutdown) {
 
         this.linkQueue = queue;
         this.POETRY_URL_HEAD = poetryUrlHead;
         this.MAX_PAGE_COUNT = maxPageCount;
-        this.firstPagesuffix = firstPagesuffix;
+        this.FIRST_PAGE_SUFFIX = firstPagesuffix;
+        this.pageComplete = pageComplete;
+        this.needShutdown = needShutdown;
     }
 
 
     public Integer call() {
 
-        String pageLink = POETRY_URL_HEAD + firstPagesuffix;
+        String pageLink = POETRY_URL_HEAD + FIRST_PAGE_SUFFIX;
         int pageCount = 1;
 
-        while (!pageLink.equals("") && pageCount <= MAX_PAGE_COUNT) {
+        while (!needShutdown.get() && !pageLink.equals("") && pageCount <= MAX_PAGE_COUNT) {
             try {
                 Document doc = Jsoup.connect(pageLink).get();
+
+                if(needShutdown.get()){
+                    break;
+                }
 
                 Elements elements = doc.getElementsByClass("sons");
                 for (Element div : elements) {
@@ -47,10 +63,8 @@ public class SearchCallable implements Callable {
                                 if (!poetryLink.equals("")) {
                                     if (!linkQueue.offer(POETRY_URL_HEAD + poetryLink)) {
                                         System.out.println("---------------------------------LinkedBlockingQueue Offer False !!!");//push
-                                        System.out.println(POETRY_URL_HEAD + poetryLink);
-                                    } else {
-                                        System.out.println(POETRY_URL_HEAD + poetryLink);
                                     }
+                                    System.out.println("Search: push link ------> " + POETRY_URL_HEAD + poetryLink);
                                     break;
                                 }
                             }
@@ -66,7 +80,7 @@ public class SearchCallable implements Callable {
                                 if (!ele.attr("href").equals("")) {
                                     pageLink = POETRY_URL_HEAD + ele.attr("href");
                                     pageCount++;
-                                    System.out.println(pageLink);
+                                    System.out.println("Search: Next Page >>> " + pageLink);
                                     break;
                                 } else {
                                     System.out.println("------------------Next Url False !!!");
@@ -75,12 +89,16 @@ public class SearchCallable implements Callable {
                         }
                     }
                 }else{
+                    pageComplete.set(true);
+                    System.out.println("Search: pageComplete!");
                     break;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                System.out.println("Search: Jsoup connect error!!!");
             }
         }
+        System.out.println("Search: Quit");
         return 0;
     }
 }
