@@ -19,7 +19,7 @@ public class SearchCallable implements Callable {
     final String POETRY_URL_HEAD;// = "http://so.gushiwen.org";
     final int MAX_PAGE_COUNT;// = 3;
 
-    LinkedBlockingQueue linkQueue;
+    LinkedBlockingQueue<String> linkQueue;
     AtomicBoolean needShutdown = new AtomicBoolean();
     AtomicBoolean pageComplete = new AtomicBoolean();
 
@@ -62,7 +62,7 @@ public class SearchCallable implements Callable {
                                 String poetryLink = ele.child(0).attr("href");
                                 if (!poetryLink.equals("")) {
                                     if (!linkQueue.offer(POETRY_URL_HEAD + poetryLink)) {
-                                        System.out.println("---------------------------------LinkedBlockingQueue Offer False !!!");//push
+                                        System.out.println("--------------------------------- linkQueue Offer False !!!");//push
                                     }
                                     System.out.println("Search: push link ------> " + POETRY_URL_HEAD + poetryLink);
                                     break;

@@ -3,7 +3,7 @@ package org.maojianwei.chinese.poetry.database;
 /**
  * Created by mao on 4/9/16.
  */
-public class MaoPoetryItem {
+public class PoetryItem {
 
     private String title;
     private String dynasty;

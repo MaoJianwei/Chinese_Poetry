@@ -14,6 +14,8 @@ public class Spider
 {
     public static void main( String[] args )
     {
+        //Deprecated, 2016.04.10
+
         LinkedBlockingQueue linkQueue = new LinkedBlockingQueue();
         AtomicBoolean needShutdown = new AtomicBoolean(false);
         AtomicBoolean pageComplete = new AtomicBoolean(false);
@@ -24,7 +26,7 @@ public class Spider
         linkQueue.offer("http://so.gushiwen.org/view_7722.aspx");
 
         ExecutorService pool = Executors.newCachedThreadPool();
-        pool.submit(new SpiderCallable(linkQueue, pageComplete, needShutdown));
+        //pool.submit(new SpiderCallable(linkQueue, pageComplete, needShutdown));
         pool.shutdown();
 
         pageComplete.set(true);

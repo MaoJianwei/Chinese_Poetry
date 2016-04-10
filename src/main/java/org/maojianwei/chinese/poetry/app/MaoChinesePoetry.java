@@ -1,5 +1,7 @@
 package org.maojianwei.chinese.poetry.app;
 
+import org.maojianwei.chinese.poetry.database.DatabaseCallable;
+import org.maojianwei.chinese.poetry.database.PoetryItem;
 import org.maojianwei.chinese.poetry.search.SearchCallable;
 import org.maojianwei.chinese.poetry.spider.SpiderCallable;
 
@@ -19,7 +21,8 @@ public class MaoChinesePoetry {
 
     public static void main(String args[]){
 
-        LinkedBlockingQueue linkQueue = new LinkedBlockingQueue();
+        LinkedBlockingQueue<String> linkQueue = new LinkedBlockingQueue();
+        LinkedBlockingQueue<PoetryItem> poetryQueue = new LinkedBlockingQueue();
         AtomicBoolean needShutdown = new AtomicBoolean(false);
         AtomicBoolean pageComplete = new AtomicBoolean(false);
 
@@ -31,9 +34,11 @@ public class MaoChinesePoetry {
                                        pageComplete,
                                        needShutdown));
         pool.submit(new SpiderCallable(linkQueue,
+                                       poetryQueue,
                                        pageComplete,
                                        needShutdown));
+        pool.submit(new DatabaseCallable(poetryQueue,
+                                         needShutdown));
         pool.shutdown();
     }
-
 }

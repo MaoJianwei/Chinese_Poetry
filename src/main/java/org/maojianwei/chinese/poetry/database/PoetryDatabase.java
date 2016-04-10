@@ -21,128 +21,40 @@ public class PoetryDatabase {
     public PoetryDatabase() {
         dbConnection = null;
         ready = new AtomicBoolean(false);
-        totalCount.set(-1);
+        totalCount = new AtomicInteger(-1);
     }
 
-
+    //Deprecated, 2016.04.10, just for function utility
     public static void main(String args[]) {
 
-//        PoetryDatabase db = new PoetryDatabase();
-//        db.initDatabase("MaoPoetry.db");
-//        int total = db.getRowCount();
-//
-//
-//
-//
-//
-//        try {
-//            Class.forName("org.sqlite.JDBC");
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//            System.out.println("Driver ClassNotFound");
-//            return;
-//        }
-//
-//        try {
-//            Connection connection = DriverManager.getConnection("jdbc:sqlite:MaoPoetry.db");
-//            Statement statement = connection.createStatement();
-//            //statement.setQueryTimeout(5);
-//
-////            int update = statement.executeUpdate("INSERT INTO POETRY VALUES(" +
-////                                                     "555," +
-////                                                     "'beijing'," +
-////                                                     "NULL," +
-////                                                     "'青岛'," +
-////                                                     "'1234'" +
-////                                                     ")");
-//
-//            ResultSet cou = statement.executeQuery("SELECT COUNT(*) AS COUNT FROM POETRY");
-//            boolean cccc = cou.next();
-//            int aaa = cou.getInt("count");
-//
-//
-//
-//
-//            int update = statement.executeUpdate("CREATE TABLE POETRY(" +
-//                                                         "id int primary key not null unique," +
-//                                                         "Title text," +
-//                                                         "Dynasty text," +
-//                                                         "Poet text," +
-//                                                         "Poem text" +
-//                                                         ")");
-//
-//
-////
-//
-//            update = statement.executeUpdate("DELETE FROM POETRY WHERE Title='" + "beijing" + "'");
-//
-//            ResultSet RET = statement.executeQuery("SELECT * FROM POETRY");
-//            statement.close();
-//            while (RET.next()) {
-//                String a = RET.getString("Title");
-//                a = RET.getString("Dynasty");
-//                a = RET.getString("Poet");
-//                a = RET.getString("Poem");
-//                int aa = RET.getInt("id");
-//                a = RET.getString("id");
-//                a = RET.getString("id");
-//                a = RET.getString("id");
-//
-//
-//            }
-////            update = statement.executeUpdate("UPDATE POETRY " +
-////                                                     "SET VALUES(" +
-////                                                     "8888," +
-////                                                     "'qingzhou'," +
-////                                                     "NULL," +
-////                                                     "'青岛'," +
-////                                                     "'1234'" +
-////                                                     ")");
-////
-////            RET = statement.executeQuery("SELECT * FROM POETRY");
-////
-////            while(RET.next()){
-////                String a = RET.getString("Title");
-////                a = RET.getString("Dynasty");
-////                a = RET.getString("Poet");
-////                a = RET.getString("Poem");
-////                int aa = RET.getInt("id");
-////                a = RET.getString("id");
-////                a = RET.getString("id");
-////                a = RET.getString("id");
-////            }
-//
-////            int update = statement.executeUpdate("INSERT INTO POETRY VALUES(" +
-////                                                     "8888," +
-////                                                     "'6666666'," +
-////                                                     "NULL," +
-////                                                     "'青岛'," +
-////                                                     "'1234'" +
-////                                                     ")");
-//
-//            RET = statement.executeQuery("SELECT * FROM POETRY");
-//            while (RET.next()) {
-//                String a = RET.getString("Title");
-//                a = RET.getString("Dynasty");
-//                a = RET.getString("Poet");
-//                a = RET.getString("Poem");
-//                int aa = RET.getInt("id");
-//                a = RET.getString("id");
-//                a = RET.getString("id");
-//                a = RET.getString("id");
-//
-//
-//            }
-//            int a = 0;
-//
-//
-//        } catch (SQLException e) {
-//            String a = e.getMessage();
-//            e.printStackTrace();
-//
-//        }
+        PoetryDatabase db = new PoetryDatabase();
+        db.initDatabase("MaoPoetry.db");
 
+        db.testUtility();
+
+        db.releaseDatabase();
     }
+    //2016.04.10, just for function utility
+    private boolean testUtility(){
+        if (!ready.get()) {
+            return false;
+        }
+
+        try {
+            Statement statement = dbConnection.createStatement();
+
+            ResultSet resultSet = statement.executeQuery("SELECT POEM FROM POETRY");
+            while(resultSet.next()){
+                String s = resultSet.getString("poem");
+                int a = 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
 
     public boolean initDatabase(String dbFileName) {
 
@@ -240,7 +152,7 @@ public class PoetryDatabase {
         }
     }
 
-    public boolean checkExist(MaoPoetryItem poetry) throws SQLException {
+    public boolean checkExist(PoetryItem poetry) throws SQLException {
 
         if (!ready.get()) {
             throw new SQLException("Mao: Database not ready");
@@ -255,7 +167,7 @@ public class PoetryDatabase {
         return isExist;
     }
 
-    public boolean deleteEntry(MaoPoetryItem poetry) {
+    public boolean deleteEntry(PoetryItem poetry) {
 
         if (!ready.get()) {
             return false;
@@ -277,7 +189,7 @@ public class PoetryDatabase {
         }
     }
 
-    public boolean insertEntry(MaoPoetryItem poetry) {
+    public boolean insertEntry(PoetryItem poetry) {
 
         if (!ready.get()) {
             return false;
