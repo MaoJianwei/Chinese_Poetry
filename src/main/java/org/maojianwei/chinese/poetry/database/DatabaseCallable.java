@@ -1,5 +1,8 @@
 package org.maojianwei.chinese.poetry.database;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -15,26 +18,35 @@ public class DatabaseCallable implements Callable {
     private LinkedBlockingQueue<PoetryItem> poetryItemQueue;
     private AtomicBoolean pageComplete;
     private AtomicBoolean needShutdown;
-    public static final int QUEUE_POLL_TIMEOUT = 500;
 
-    public DatabaseCallable(LinkedBlockingQueue poetryItemQueue, AtomicBoolean pageComplete, AtomicBoolean needShutdown) {
+    private final int QUEUE_POLL_TIMEOUT;
+
+    private Logger log = LoggerFactory.getLogger(getClass());
+
+
+    public DatabaseCallable(LinkedBlockingQueue poetryItemQueue, int queuePollTimeout, AtomicBoolean pageComplete, AtomicBoolean needShutdown) {
         this.db = null;
         this.poetryItemQueue = poetryItemQueue;
         this.pageComplete = pageComplete;
         this.needShutdown = needShutdown;
+        this.QUEUE_POLL_TIMEOUT = queuePollTimeout;
     }
 
     public Integer call() {
+
+        Thread.currentThread().setName("Mao_Database");
+
         db = new PoetryDatabase();
         boolean ret = db.initDatabase("MaoPoetry.db");
-        System.out.print("Database: DB init -> ");
-        System.out.println(ret);
+
+        log.info("DB init -> {}", ret);
+
 
         while (!needShutdown.get()) {
 
             //Attention - Mao: should not use pageComplete to quit, because parse Web cost much time ---> should use needShutdown to control
             try {
-                System.out.println("Database: get poetry Item...");
+                log.info("get poetry Item...");
                 PoetryItem poetryItem = poetryItemQueue.poll(QUEUE_POLL_TIMEOUT, TimeUnit.MILLISECONDS);
 
                 if (needShutdown.get()) {
@@ -51,8 +63,7 @@ public class DatabaseCallable implements Callable {
                     }
                 }
 
-                System.out.print("Database: get poetry Item OK ---> ");
-                System.out.println(poetryItem.getTitle());
+                log.info("get poetry Item OK ---> {}", poetryItem.getTitle());
 
                 /**
                  * some poetry have same title
@@ -66,22 +77,20 @@ public class DatabaseCallable implements Callable {
                     }
                 */
 
-                System.out.println("Database: insert item...");
+                log.info("insert item...");
                 ret = db.insertEntry(poetryItem);
-                System.out.println("Database: insert item OK!");
+                log.info("insert item OK!");
 
-
-                System.out.print("Database: poetry count: ");
-                System.out.println(db.getRowCount());
+                log.info("poetry count: {}", db.getRowCount());
 
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                System.out.println("Database: --------------------- poetryItemQueue poll error!!!");
+                log.error("------------- poetryItemQueue poll error!!!");
             }
         }
-        System.out.println("Database: shutdown, releasing...");
+        log.info("shutdown, releasing...");
         db.releaseDatabase();
-        System.out.println("Database: shutdown, release OK!");
+        log.info("shutdown, release OK!");
         return 0;
     }
 }

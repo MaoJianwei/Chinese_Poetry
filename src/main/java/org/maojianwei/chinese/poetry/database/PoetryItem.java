@@ -36,8 +36,4 @@ public class PoetryItem {
         return poem;
     }
 
-
-
-
-
 }
