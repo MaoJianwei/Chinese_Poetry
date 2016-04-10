@@ -136,7 +136,7 @@ public class SpiderCallable implements Callable {
 
         poetry.append(poem);
 
-        log.info("Get one poetry:\n {}", poetry.append("--- END ---").toString());//TODO - check
+        log.info("Get one poetry:\n{}", poetry.append("--- END ---").toString());//TODO - check
 
 
         return poetryItem;
