@@ -12,7 +12,9 @@ public class LogSystem {
 
     public static void initAppLogSystem(){
         LogManager.resetConfiguration();//avoid config override by other jar
-        PropertyConfigurator.configure("./log4j.properties");
+        PropertyConfigurator.configure(LogSystem.class.getResource("/log4j.properties"));
+        // TODO - Attention!!!  The method of Reference to resource file included by Maven is below!
+        // LogSystem.class.getResource("/log4j.properties")
     }
 
     public static void main(String args[]){
