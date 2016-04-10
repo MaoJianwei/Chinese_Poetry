@@ -5,10 +5,10 @@ package org.maojianwei.chinese.poetry.database;
  */
 public class MaoPoetryItem {
 
-    String title;
-    String dynasty;
-    String poet;
-    String poem;
+    private String title;
+    private String dynasty;
+    private String poet;
+    private String poem;
 
 
     public void setTitle(String title){
