@@ -6,24 +6,32 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by mao on 4/9/16.
  */
-public class Database {
+public class PoetryDatabase {
 
     Connection dbConnection;
     AtomicBoolean ready;
-//    AtomicInteger
+    Integer totalCount;
 
-    public Database() {
+
+    public PoetryDatabase() {
         dbConnection = null;
         ready = new AtomicBoolean(false);
     }
 
 
     public static void main(String args[]) {
+
+        PoetryDatabase db = new PoetryDatabase();
+        db.initDatabase("MaoPoetry.db");
+        db.
+
+
+
+
 
         try {
             Class.forName("org.sqlite.JDBC");
@@ -38,6 +46,21 @@ public class Database {
             Statement statement = connection.createStatement();
             //statement.setQueryTimeout(5);
 
+//            int update = statement.executeUpdate("INSERT INTO POETRY VALUES(" +
+//                                                     "555," +
+//                                                     "'beijing'," +
+//                                                     "NULL," +
+//                                                     "'青岛'," +
+//                                                     "'1234'" +
+//                                                     ")");
+
+            ResultSet cou = statement.executeQuery("SELECT COUNT(*) AS COUNT FROM POETRY");
+            boolean cccc = cou.next();
+            int aaa = cou.getInt("count");
+
+
+
+
             int update = statement.executeUpdate("CREATE TABLE POETRY(" +
                                                          "id int primary key not null unique," +
                                                          "Title text," +
@@ -48,13 +71,7 @@ public class Database {
 
 
 //
-            update = statement.executeUpdate("INSERT INTO POETRY VALUES(" +
-                                                     "555," +
-                                                     "'beijing'," +
-                                                     "NULL," +
-                                                     "'青岛'," +
-                                                     "'1234'" +
-                                                     ")");
+
             update = statement.executeUpdate("DELETE FROM POETRY WHERE Title='" + "beijing" + "'");
 
             ResultSet RET = statement.executeQuery("SELECT * FROM POETRY");
@@ -141,17 +158,23 @@ public class Database {
             e.printStackTrace();
             return false;
         }
-        ready.set(true);
-        return true;
+        if(initTable()){
+            totalCount = getRowCount();
+            if(totalCount >= 0){
+                ready.set(true);
+                return true;
+            }
+        }
+        return false;
     }
 
-    public boolean initTable() {
+    private boolean initTable() {
 
         try {
             Statement statement = dbConnection.createStatement();
 
             statement.executeUpdate("CREATE TABLE POETRY(" +
-                                            "id int primary key not null unique," +
+                                            "ID int primary key not null unique," +
                                             "Title text," +
                                             "Dynasty text," +
                                             "Poet text," +
@@ -170,6 +193,20 @@ public class Database {
         }
     }
 
+    public int getRowCount(){
+
+        try {
+            Statement statement = dbConnection.createStatement();
+            ResultSet cou = statement.executeQuery("SELECT COUNT(*) AS COUNT FROM POETRY");
+            int ret = cou.next() ? cou.getInt("count") : -1;
+            statement.close();
+            return ret;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
     public boolean checkExist(String poetryTitle) throws SQLException {
 
         Statement statement = dbConnection.createStatement();
@@ -180,18 +217,18 @@ public class Database {
         return isExist;
     }
 
-    public static void updateEntry(String poetryTitle) {
-
-
-    }
-
-    public boolean deleteEntry() {
+    public boolean deleteEntry(String poetryTitle) {
 
         try {
             Statement statement = dbConnection.createStatement();
-            int update = statement.executeUpdate("DELETE FROM POETRY WHERE Title='" + "beijing" + "'");
+            int update = statement.executeUpdate("DELETE FROM POETRY WHERE Title='" + poetryTitle + "'");
             statement.close();
-            return update > 0;
+            if(update > 0){
+                totalCount--;
+                return true;
+            }else{
+                return false;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -200,15 +237,19 @@ public class Database {
 
     public boolean insertEntry(MaoPoetryItem poetry) {
 
+        if(totalCount < 0){
+            return false;
+        }
+
         try {
             Statement statement = dbConnection.createStatement();
             int update = statement.executeUpdate(
                     "INSERT INTO POETRY VALUES(" +
-                            "555," +
-                            "'beijing'," +
-                            "NULL," +
-                            "'青岛'," +
-                            "'1234'" +
+                            (++totalCount) + "," +
+                            "'" + poetry.getTitle() + "'," +
+                            "'" + poetry.getDynasty() + "'," +
+                            "'" + poetry.getPoet() + "'," +
+                            "'" + poetry.getPoem() + "'" +
                             ")");
             statement.close();
             return update > 0;
