@@ -32,7 +32,7 @@ public class SearchCallable implements Callable {
     public SearchCallable(
             LinkedBlockingQueue queue,
             String poetryUrlHead,
-            String firstPagesuffix,
+            String firstPageSuffix,
             int maxPageCount,
             AtomicBoolean pageComplete,
             AtomicBoolean needShutdown) {
@@ -40,7 +40,7 @@ public class SearchCallable implements Callable {
         this.linkQueue = queue;
         this.POETRY_URL_HEAD = poetryUrlHead;
         this.MAX_PAGE_COUNT = maxPageCount;
-        this.FIRST_PAGE_SUFFIX = firstPagesuffix;
+        this.FIRST_PAGE_SUFFIX = firstPageSuffix;
         this.pageComplete = pageComplete;
         this.needShutdown = needShutdown;
     }
@@ -69,9 +69,9 @@ public class SearchCallable implements Callable {
                                 String poetryLink = ele.child(0).attr("href");
                                 if (!poetryLink.equals("")) {
                                     if (!linkQueue.offer(POETRY_URL_HEAD + poetryLink)) {
-                                        System.out.println("--------------------------------- linkQueue Offer False !!!");//push
+                                        log.error("--------------------------------- linkQueue Offer False !!!");//push
                                     }
-                                    System.out.println("Search: push link ------> " + POETRY_URL_HEAD + poetryLink);
+                                    log.info("push link -----> " + POETRY_URL_HEAD + poetryLink);
                                     break;
                                 }
                             }
@@ -87,25 +87,25 @@ public class SearchCallable implements Callable {
                                 if (!ele.attr("href").equals("")) {
                                     pageLink = POETRY_URL_HEAD + ele.attr("href");
                                     pageCount++;
-                                    System.out.println("Search: Next Page >>> " + pageLink);
+                                    log.info("Next Page >>> " + pageLink);
                                     break;
                                 } else {
-                                    System.out.println("------------------Next Url False !!!");
+                                    log.error("------------------Next Url False !!!");
                                 }
                             }
                         }
                     }
                 }else{
                     pageComplete.set(true);
-                    System.out.println("Search: pageComplete!");
+                    log.info("set pageComplete OK");
                     break;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.println("Search: Jsoup connect error!!!");
+                log.error("Jsoup connect error!!!");
             }
         }
-        System.out.println("Search: Quit");
+        log.info("Search finish, Quit.");
         return 0;
     }
 }

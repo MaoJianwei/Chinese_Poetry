@@ -52,37 +52,36 @@ public class SpiderCallable implements Callable {
                 poetryUrl = linkQueue.poll(QUEUE_POLL_TIMEOUT, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                System.out.println("Spider: --------------------- linkQueue poll error!!!");
+                log.error("--------------------- linkQueue poll error!!!");
             }
 
             if (poetryUrl == null) {
                 if (pageComplete.get()) {
-                    System.out.println("Spider: pageComplete set");
+                    log.info("pageComplete is set");
                     break;
                 } else {
-                    System.out.println("Spider: queue empty, wait...");
+                    log.info("queue empty, wait...");
                     continue;
                 }
             }
 
             if (needShutdown.get()) {
-                System.out.println("Spider: shutdown set");
+                log.info("shutdown is set");
                 break;
             }
 
             PoetryItem poetryItem = getOnePoetry(poetryUrl);
             if(poetryItem != null) {
                 if (!poetryQueue.offer(poetryItem)) {
-                    System.out.println("--------------------------------- poetryQueue Offer False !!!");//push
+                    log.error("--------------------------------- poetryQueue Offer False !!!");//push
                 }
-                System.out.println("Spider: push poetry ------> " + poetryItem.getTitle());
+                log.info("push poetry ------> {}", poetryItem.getTitle());
 
-                System.out.print("Spider: poetry count ");
-                System.out.println(++count);
+                log.info("poetry count: {}", ++count);
             }
         }
         needShutdown.set(true);
-        System.out.println("Spider: set needShutdown, Quit");
+        log.info("set needShutdown, Quit");
         return 0;
     }
 
@@ -93,24 +92,24 @@ public class SpiderCallable implements Callable {
             doc = Jsoup.connect(url).get();
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Spider: ------------- Jsoup connect error!!!");
+            log.warn("------------- Jsoup connect error!!!");
             return null;
         }
 
 
         String title = getOnePoetryTitle(doc);
         if (title.equals("mao unknown")) {
-            System.out.println("Spider: ------------- parse Title fail!");
+            log.warn("------------- parse Title fail!");
             return null;
         }
         String dynasty = getOnePoetryDynasty(doc);
         if (dynasty.equals("mao unknown")) {
-            System.out.println("Spider: ------------- parse Dynasty fail!");
+            log.warn("------------- parse Dynasty fail!");
             return null;
         }
         String poet = getOnePoetryPoet(doc);
         if (poet.equals("mao unknown")) {
-            System.out.println("Spider: ------------- parse Poet fail!");
+            log.warn("------------- parse Poet fail!");
             return null;
         }
         String poem = getOnePoetryContent(doc);
@@ -133,7 +132,7 @@ public class SpiderCallable implements Callable {
 
         poetry.append(poem);
 
-        System.out.println(poetry.append("--- END ---").toString());
+        log.info("Get one poetry:\n {}", poetry.append("--- END ---").toString());//TODO - check
 
 
         return poetryItem;
@@ -233,6 +232,7 @@ public class SpiderCallable implements Callable {
 
             } else {
                 content.append("Warning !!!\n");
+                log.error("getOnePoetryContent parse warning!!!");
             }
 
         }
