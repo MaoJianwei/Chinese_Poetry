@@ -42,6 +42,8 @@
 
     <build>
         <plugins>
+
+            <!-- generate Manifest -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -52,14 +54,45 @@
 
                             <mainClass>org.maojianwei.chinese.poetry.app.MaoChinesePoetry</mainClass>
 
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>dependency-jars/</classpathPrefix>
+                            <!-- add dependency classpath: ./dependency-jars/ should be same to maven-dependency-plugin below-->
+                            <!--<addClasspath>true</addClasspath>-->
+                            <!--<classpathPrefix>dependency-jars/</classpathPrefix>-->
+
+                            <!-- add detail info to manifest -->
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <!--<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>-->
 
                         </manifest>
                     </archive>
                 </configuration>
             </plugin>
 
+
+            <!-- maven-shade-plugin will unzip the dependency jar, copy the .class files to our app jar -->
+            <!-- so all dependencies is OK -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <!--<configuration>-->
+                            <!--<transformers>-->
+                                <!--<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
+                                    <!--<mainClass>org.maojianwei.chinese.poetry.app.MaoChinesePoetry</mainClass>-->
+                                <!--</transformer>-->
+                            <!--</transformers>-->
+                        <!--</configuration>-->
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <!-- copy dependency to ${project.build.directory}/dependency-jars/-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
