@@ -1,28 +1,23 @@
-package org.maojianwei.chinese.poetry.search;
+package org.maojianwei.chinese.poetry.app;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.maojianwei.chinese.poetry.search.SearchCallable;
+import org.maojianwei.chinese.poetry.spider.SpiderCallable;
 
-import javax.swing.text.html.HTML;
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Hello world!
+ * Created by mao on 4/9/16.
  */
-public class SearchLinks {
+public class MaoChinesePoetry {
 
     public static final String FIRST_PAGE_SUFFIX = "/type.aspx?p=1";
     public static final String POETRY_URL_HEAD = "http://so.gushiwen.org";
     public static final int MAX_PAGE_COUNT = 3;
 
-
-    public static void main(String[] args) {
+    public static void main(String args[]){
 
         LinkedBlockingQueue linkQueue = new LinkedBlockingQueue();
         AtomicBoolean needShutdown = new AtomicBoolean(false);
@@ -35,9 +30,10 @@ public class SearchLinks {
                                        MAX_PAGE_COUNT,
                                        pageComplete,
                                        needShutdown));
-
+        pool.submit(new SpiderCallable(linkQueue,
+                                       pageComplete,
+                                       needShutdown));
         pool.shutdown();
     }
-
 
 }
