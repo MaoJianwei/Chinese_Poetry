@@ -10,6 +10,11 @@ import org.slf4j.LoggerFactory;
  */
 public class LogSystem {
 
+    public static void initAppLogSystem(){
+        LogManager.resetConfiguration();//avoid config override by other jar
+        PropertyConfigurator.configure("./log4j.properties");
+    }
+
     public static void main(String args[]){
 
         LogSystem logSystem = new LogSystem();
@@ -17,8 +22,6 @@ public class LogSystem {
     }
 
     public void  testLog() {
-        LogManager.resetConfiguration();//avoid config override by other jar
-        PropertyConfigurator.configure("./log4j.properties");
 
         Logger logger = LoggerFactory.getLogger(getClass());
         logger.info("radar");

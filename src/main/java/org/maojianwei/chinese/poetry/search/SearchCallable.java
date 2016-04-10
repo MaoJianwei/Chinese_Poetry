@@ -4,6 +4,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -15,13 +17,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SearchCallable implements Callable {
 
-    final String FIRST_PAGE_SUFFIX;
-    final String POETRY_URL_HEAD;// = "http://so.gushiwen.org";
-    final int MAX_PAGE_COUNT;// = 3;
+    private final String FIRST_PAGE_SUFFIX;
+    private final String POETRY_URL_HEAD;// = "http://so.gushiwen.org";
+    private final int MAX_PAGE_COUNT;// = 3;
 
-    LinkedBlockingQueue<String> linkQueue;
-    AtomicBoolean needShutdown = new AtomicBoolean();
-    AtomicBoolean pageComplete = new AtomicBoolean();
+    private LinkedBlockingQueue<String> linkQueue;
+    private AtomicBoolean needShutdown;
+    private AtomicBoolean pageComplete;
+
+    private Logger log = LoggerFactory.getLogger(getClass());
+
 
 
     public SearchCallable(
@@ -42,6 +47,8 @@ public class SearchCallable implements Callable {
 
 
     public Integer call() {
+
+        Thread.currentThread().setName("Mao_Search");
 
         String pageLink = POETRY_URL_HEAD + FIRST_PAGE_SUFFIX;
         int pageCount = 1;

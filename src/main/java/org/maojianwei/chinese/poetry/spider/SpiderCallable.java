@@ -7,6 +7,8 @@ import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 import org.maojianwei.chinese.poetry.database.PoetryItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.Callable;
@@ -19,20 +21,27 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SpiderCallable implements Callable {
 
-    LinkedBlockingQueue<String> linkQueue;
-    LinkedBlockingQueue<PoetryItem> poetryQueue;
-    AtomicBoolean pageComplete;
-    AtomicBoolean needShutdown;
+    private LinkedBlockingQueue<String> linkQueue;
+    private LinkedBlockingQueue<PoetryItem> poetryQueue;
+    private AtomicBoolean pageComplete;
+    private AtomicBoolean needShutdown;
 
-    public SpiderCallable(LinkedBlockingQueue linkQueue, LinkedBlockingQueue poetryQueue, AtomicBoolean pageComplete, AtomicBoolean needShutdown) {
+    private final int QUEUE_POLL_TIMEOUT;
+
+    private Logger log = LoggerFactory.getLogger(getClass());
+
+    public SpiderCallable(LinkedBlockingQueue linkQueue, LinkedBlockingQueue poetryQueue, int queuePollTimeout, AtomicBoolean pageComplete, AtomicBoolean needShutdown) {
         this.linkQueue = linkQueue;
         this.poetryQueue = poetryQueue;
         this.needShutdown = needShutdown;
         this.pageComplete = pageComplete;
+        this.QUEUE_POLL_TIMEOUT = queuePollTimeout;
     }
 
 
     public Integer call() {
+
+        Thread.currentThread().setName("Mao_Spider");
 
         int count = 0;
 
@@ -40,7 +49,7 @@ public class SpiderCallable implements Callable {
 
             String poetryUrl = null;
             try {
-                poetryUrl = linkQueue.poll(500, TimeUnit.MILLISECONDS);
+                poetryUrl = linkQueue.poll(QUEUE_POLL_TIMEOUT, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 System.out.println("Spider: --------------------- linkQueue poll error!!!");

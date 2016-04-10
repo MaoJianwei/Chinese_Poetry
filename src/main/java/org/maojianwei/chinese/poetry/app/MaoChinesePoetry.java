@@ -2,6 +2,7 @@ package org.maojianwei.chinese.poetry.app;
 
 import org.maojianwei.chinese.poetry.database.DatabaseCallable;
 import org.maojianwei.chinese.poetry.database.PoetryItem;
+import org.maojianwei.chinese.poetry.log.LogSystem;
 import org.maojianwei.chinese.poetry.search.SearchCallable;
 import org.maojianwei.chinese.poetry.spider.SpiderCallable;
 
@@ -18,8 +19,11 @@ public class MaoChinesePoetry {
     public static final String FIRST_PAGE_SUFFIX = "/type.aspx?p=1";
     public static final String POETRY_URL_HEAD = "http://so.gushiwen.org";
     public static final int MAX_PAGE_COUNT = 3;
+    public static final int QUEUE_POLL_TIMEOUT = 500;
 
     public static void main(String args[]){
+
+        LogSystem.initAppLogSystem();
 
         LinkedBlockingQueue<String> linkQueue = new LinkedBlockingQueue();
         LinkedBlockingQueue<PoetryItem> poetryQueue = new LinkedBlockingQueue();
@@ -35,9 +39,11 @@ public class MaoChinesePoetry {
                                        needShutdown));
         pool.submit(new SpiderCallable(linkQueue,
                                        poetryQueue,
+                                       QUEUE_POLL_TIMEOUT,
                                        pageComplete,
                                        needShutdown));
         pool.submit(new DatabaseCallable(poetryQueue,
+                                         QUEUE_POLL_TIMEOUT,
                                          needShutdown));
         pool.shutdown();
     }
