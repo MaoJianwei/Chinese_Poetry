@@ -12,9 +12,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class Spider
 {
+    //Deprecated, 2016.04.10
     public static void main( String[] args )
     {
-        //Deprecated, 2016.04.10
+
 
         LinkedBlockingQueue linkQueue = new LinkedBlockingQueue();
         AtomicBoolean needShutdown = new AtomicBoolean(false);
