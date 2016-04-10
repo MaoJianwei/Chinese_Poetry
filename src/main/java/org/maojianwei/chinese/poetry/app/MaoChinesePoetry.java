@@ -18,7 +18,7 @@ public class MaoChinesePoetry {
 
     public static final String FIRST_PAGE_SUFFIX = "/type.aspx?p=1";
     public static final String POETRY_URL_HEAD = "http://so.gushiwen.org";
-    public static final int MAX_PAGE_COUNT = 3;
+    public static final int MAX_PAGE_COUNT = 200;
     public static final int QUEUE_POLL_TIMEOUT = 500;
 
     public static void main(String args[]){

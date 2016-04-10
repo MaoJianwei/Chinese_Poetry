@@ -55,10 +55,10 @@ public class DatabaseCallable implements Callable {
 
                 if (poetryItem == null) {
                     if (pageComplete.get()) {
-                        System.out.println("Database: pageComplete set");
+                        log.info("pageComplete is set");
                         break;
                     } else {
-                        System.out.println("Database: queue empty, wait...");
+                        log.info("queue empty, wait...");
                         continue;
                     }
                 }
