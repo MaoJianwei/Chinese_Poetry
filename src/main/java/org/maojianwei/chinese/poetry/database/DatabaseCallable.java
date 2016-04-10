@@ -13,12 +13,14 @@ public class DatabaseCallable implements Callable {
 
     private PoetryDatabase db;
     private LinkedBlockingQueue<PoetryItem> poetryItemQueue;
+    private AtomicBoolean pageComplete;
     private AtomicBoolean needShutdown;
     public static final int QUEUE_POLL_TIMEOUT = 500;
 
-    public DatabaseCallable(LinkedBlockingQueue poetryItemQueue, AtomicBoolean needShutdown) {
+    public DatabaseCallable(LinkedBlockingQueue poetryItemQueue, AtomicBoolean pageComplete, AtomicBoolean needShutdown) {
         this.db = null;
         this.poetryItemQueue = poetryItemQueue;
+        this.pageComplete = pageComplete;
         this.needShutdown = needShutdown;
     }
 
@@ -40,7 +42,13 @@ public class DatabaseCallable implements Callable {
                 }
 
                 if (poetryItem == null) {
-                    continue;
+                    if (pageComplete.get()) {
+                        System.out.println("Database: pageComplete set");
+                        break;
+                    } else {
+                        System.out.println("Database: queue empty, wait...");
+                        continue;
+                    }
                 }
 
                 System.out.print("Database: get poetry Item OK ---> ");

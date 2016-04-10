@@ -21,7 +21,7 @@ public class SearchCallable implements Callable {
 
     LinkedBlockingQueue<String> linkQueue;
     AtomicBoolean needShutdown = new AtomicBoolean();
-    AtomicBoolean pageComplete = new AtomicBoolean();
+    AtomicBoolean linkComplete = new AtomicBoolean();
 
 
     public SearchCallable(
@@ -29,14 +29,14 @@ public class SearchCallable implements Callable {
             String poetryUrlHead,
             String firstPagesuffix,
             int maxPageCount,
-            AtomicBoolean pageComplete,
+            AtomicBoolean linkComplete,
             AtomicBoolean needShutdown) {
 
         this.linkQueue = queue;
         this.POETRY_URL_HEAD = poetryUrlHead;
         this.MAX_PAGE_COUNT = maxPageCount;
         this.FIRST_PAGE_SUFFIX = firstPagesuffix;
-        this.pageComplete = pageComplete;
+        this.linkComplete = linkComplete;
         this.needShutdown = needShutdown;
     }
 
@@ -89,7 +89,7 @@ public class SearchCallable implements Callable {
                         }
                     }
                 }else{
-                    pageComplete.set(true);
+                    linkComplete.set(true);
                     System.out.println("Search: pageComplete!");
                     break;
                 }

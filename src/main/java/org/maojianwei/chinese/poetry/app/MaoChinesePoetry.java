@@ -24,6 +24,7 @@ public class MaoChinesePoetry {
         LinkedBlockingQueue<String> linkQueue = new LinkedBlockingQueue();
         LinkedBlockingQueue<PoetryItem> poetryQueue = new LinkedBlockingQueue();
         AtomicBoolean needShutdown = new AtomicBoolean(false);
+        AtomicBoolean linkComplete = new AtomicBoolean(false);
         AtomicBoolean pageComplete = new AtomicBoolean(false);
 
         ExecutorService pool = Executors.newCachedThreadPool();
@@ -31,13 +32,15 @@ public class MaoChinesePoetry {
                                        POETRY_URL_HEAD,
                                        FIRST_PAGE_SUFFIX,
                                        MAX_PAGE_COUNT,
-                                       pageComplete,
+                                       linkComplete,
                                        needShutdown));
         pool.submit(new SpiderCallable(linkQueue,
                                        poetryQueue,
+                                       linkComplete,
                                        pageComplete,
                                        needShutdown));
         pool.submit(new DatabaseCallable(poetryQueue,
+                                         pageComplete,
                                          needShutdown));
         pool.shutdown();
     }

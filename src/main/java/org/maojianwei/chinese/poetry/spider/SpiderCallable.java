@@ -21,13 +21,15 @@ public class SpiderCallable implements Callable {
 
     LinkedBlockingQueue<String> linkQueue;
     LinkedBlockingQueue<PoetryItem> poetryQueue;
-    AtomicBoolean pageComplete;
+    AtomicBoolean linkComplete;
+    private AtomicBoolean pageComplete;
     AtomicBoolean needShutdown;
 
-    public SpiderCallable(LinkedBlockingQueue linkQueue, LinkedBlockingQueue poetryQueue, AtomicBoolean pageComplete, AtomicBoolean needShutdown) {
+    public SpiderCallable(LinkedBlockingQueue linkQueue, LinkedBlockingQueue poetryQueue, AtomicBoolean linkComplete, AtomicBoolean pageComplete, AtomicBoolean needShutdown) {
         this.linkQueue = linkQueue;
         this.poetryQueue = poetryQueue;
         this.needShutdown = needShutdown;
+        this.linkComplete = linkComplete;
         this.pageComplete = pageComplete;
     }
 
@@ -47,7 +49,7 @@ public class SpiderCallable implements Callable {
             }
 
             if (poetryUrl == null) {
-                if (pageComplete.get()) {
+                if (linkComplete.get()) {
                     System.out.println("Spider: pageComplete set");
                     break;
                 } else {
@@ -72,7 +74,7 @@ public class SpiderCallable implements Callable {
                 System.out.println(++count);
             }
         }
-        needShutdown.set(true);
+        pageComplete.set(true);
         System.out.println("Spider: set needShutdown, Quit");
         return 0;
     }
