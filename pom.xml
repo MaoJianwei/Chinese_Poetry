@@ -54,11 +54,9 @@
 
                             <mainClass>org.maojianwei.chinese.poetry.app.MaoChinesePoetry</mainClass>
 
-
                             <!-- add dependency classpath: ./dependency-jars/ should be same to maven-dependency-plugin below-->
                             <!--<addClasspath>true</addClasspath>-->
                             <!--<classpathPrefix>dependency-jars/</classpathPrefix>-->
-
 
                             <!-- add detail info to manifest -->
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
