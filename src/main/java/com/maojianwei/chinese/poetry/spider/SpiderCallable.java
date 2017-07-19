@@ -1,4 +1,4 @@
-package org.maojianwei.chinese.poetry.spider;
+package com.maojianwei.chinese.poetry.spider;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -6,7 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
-import org.maojianwei.chinese.poetry.database.PoetryItem;
+import com.maojianwei.chinese.poetry.database.PoetryItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

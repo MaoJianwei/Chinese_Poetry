@@ -3,13 +3,47 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.maojianwei</groupId>
-    <artifactId>maojianwei.chinese.poetry</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <groupId>com.maojianwei</groupId>
+    <artifactId>chinese-poetry</artifactId>
+    <version>1.2</version>
     <packaging>jar</packaging>
 
-    <name>maojianwei.chinese.poetry</name>
-    <url>http://maojianwei.github.io/</url>
+
+
+
+    <name>maojianwei-chinese-poetry</name>
+    <description>Spider, Store, Exhibition and Process for chinese poetry</description>
+    <url>http://www.maojianwei.com/</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Jianwei Mao</name>
+            <email>maojianwei2020@gmail.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git@github.com:MaoJianwei/Chinese_Poetry.git</connection>
+        <developerConnection>scm:git:git@github.com:MaoJianwei/Chinese_Poetry.git</developerConnection>
+        <url>git@github.com:MaoJianwei/Chinese_Poetry.git</url>
+    </scm>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>mavenCentral_ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>mavenCentral_ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -72,7 +106,7 @@
                     <archive>
                         <manifest>
 
-                            <mainClass>org.maojianwei.chinese.poetry.app.MaoChinesePoetry</mainClass>
+                            <mainClass>com.maojianwei.chinese.poetry.app.MaoChinesePoetry</mainClass>
 
                             <!-- add dependency classpath: ./dependency-jars/ should be same to maven-dependency-plugin below-->
                             <!--<addClasspath>true</addClasspath>-->
@@ -103,7 +137,7 @@
                         <!--<configuration>-->
                             <!--<transformers>-->
                                 <!--<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
-                                    <!--<mainClass>org.maojianwei.chinese.poetry.app.MaoChinesePoetry</mainClass>-->
+                                    <!--<mainClMaoChinesePoetryetry</mainClass>-->
                                 <!--</transformer>-->
                             <!--</transformers>-->
                         <!--</configuration>-->
@@ -129,6 +163,48 @@
                                 ${project.build.directory}/dependency-jars/
                             </outputDirectory>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

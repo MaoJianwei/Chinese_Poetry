@@ -1,4 +1,4 @@
-package org.maojianwei.chinese.poetry.database;
+package com.maojianwei.chinese.poetry.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

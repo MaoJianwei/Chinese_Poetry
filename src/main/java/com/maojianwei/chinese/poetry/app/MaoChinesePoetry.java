@@ -1,10 +1,10 @@
-package org.maojianwei.chinese.poetry.app;
+package com.maojianwei.chinese.poetry.app;
 
-import org.maojianwei.chinese.poetry.database.DatabaseCallable;
-import org.maojianwei.chinese.poetry.database.PoetryItem;
-import org.maojianwei.chinese.poetry.log.LogSystem;
-import org.maojianwei.chinese.poetry.search.SearchCallable;
-import org.maojianwei.chinese.poetry.spider.SpiderCallable;
+import com.maojianwei.chinese.poetry.database.DatabaseCallable;
+import com.maojianwei.chinese.poetry.log.LogSystem;
+import com.maojianwei.chinese.poetry.search.SearchCallable;
+import com.maojianwei.chinese.poetry.database.PoetryItem;
+import com.maojianwei.chinese.poetry.spider.SpiderCallable;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

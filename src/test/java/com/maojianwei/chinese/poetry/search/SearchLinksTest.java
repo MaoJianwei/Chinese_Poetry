@@ -1,4 +1,4 @@
-package org.maojianwei.chinese.poetry.search;
+package com.maojianwei.chinese.poetry.search;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

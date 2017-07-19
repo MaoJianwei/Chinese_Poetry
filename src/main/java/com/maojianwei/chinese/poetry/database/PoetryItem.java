@@ -1,4 +1,4 @@
-package org.maojianwei.chinese.poetry.database;
+package com.maojianwei.chinese.poetry.database;
 
 /**
  * Created by mao on 4/9/16.

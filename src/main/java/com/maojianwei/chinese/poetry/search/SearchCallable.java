@@ -1,4 +1,4 @@
-package org.maojianwei.chinese.poetry.search;
+package com.maojianwei.chinese.poetry.search;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

@@ -1,4 +1,4 @@
-package org.maojianwei.chinese.poetry.spider;
+package com.maojianwei.chinese.poetry.spider;
 
 
 import java.util.concurrent.ExecutorService;
