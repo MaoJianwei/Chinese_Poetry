@@ -194,6 +194,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- GPG sign is usable for repo admin, disable gpg sign for CI and contributors.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -208,6 +209,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
         </plugins>
     </build>
 
