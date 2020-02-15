@@ -3,6 +3,7 @@ jdk:
   - oraclejdk11
   - oraclejdk12
   - oraclejdk13
+  - openjdk8
   - openjdk9
   - openjdk10
   - openjdk11
